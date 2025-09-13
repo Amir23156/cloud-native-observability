@@ -84,7 +84,8 @@ jobs:
           ACCOUNT=$(echo "$ARN" | cut -d: -f5)
           NAME=$(echo "$ARN" | awk -F'/' '{print $NF}')
           ROLE_NAME=${AWS_ROLE_NAME:-GitHubActionsEKSDeployer}
-          ROLE_ARN="arn:aws:iam:${ACCOUNT}:role/${ROLE_NAME}"
+          # Note the double colon after 'iam' in the ARN format
+          ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"
           echo "region=$REGION" >> $GITHUB_OUTPUT
           echo "name=$NAME" >> $GITHUB_OUTPUT
           echo "role_arn=$ROLE_ARN" >> $GITHUB_OUTPUT
