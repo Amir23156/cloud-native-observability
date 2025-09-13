@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-orders-api-metrics
+  namespace: observability
+  labels:
+    app: go-orders-api
+spec:
+  selector:
+    app: go-orders-api
+  ports:
+    - name: http-metrics
+      port: 5000
+      targetPort: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: go-orders-api
+  namespace: observability
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: go-orders-api
+  namespaceSelector:
+    matchNames: ["observability"]
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      scheme: http
+      interval: 30s

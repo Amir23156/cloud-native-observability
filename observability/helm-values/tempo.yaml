@@ -1,0 +1,35 @@
+tempo:
+  resources: {}
+  retention: 24h
+
+service:
+  type: ClusterIP
+
+ingester:
+  replicas: 1
+
+tempoConfig: |
+  server:
+    http_listen_port: 3200
+  distributor:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo
+  compactor:
+    compaction:
+      block_retention: 24h
+
+extraVolumes:
+  - name: tempo-storage
+    emptyDir: {}
+
+extraVolumeMounts:
+  - name: tempo-storage
+    mountPath: /var/tempo
