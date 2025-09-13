@@ -92,10 +92,12 @@ jobs:
           aws-region: ${{ steps.parse.outputs.region }}
 
       - name: Update kubeconfig
-        uses: aws-actions/eks-update-kubeconfig@v1
-        with:
-          cluster-name: ${{ steps.parse.outputs.name }}
-          region: ${{ steps.parse.outputs.region }}
+        shell: bash
+        run: |
+          echo "Configuring kubeconfig for cluster '${{ steps.parse.outputs.name }}' in region '${{ steps.parse.outputs.region }}'"
+          aws eks update-kubeconfig \
+            --name "${{ steps.parse.outputs.name }}" \
+            --region "${{ steps.parse.outputs.region }}"
 
       - name: Set image to current commit SHA and rollout
         env:
