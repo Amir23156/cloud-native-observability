@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
-
+	
 	"github.com/Amir23156/cloud-native-observability/app/internal/metrics"
 	"go.opentelemetry.io/otel"
 )

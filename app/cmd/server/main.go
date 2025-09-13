@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/Amir23156/cloud-native-observability/app/internal/api"
 	"github.com/Amir23156/cloud-native-observability/app/internal/metrics"
@@ -14,23 +17,50 @@ import (
 func main() {
 	ctx := context.Background()
 
-	// Init tracing (OTLP -> OTel Collector -> Tempo)
+	// Tracing
 	shutdown, err := observability.InitTracer(ctx)
 	if err != nil {
 		log.Fatalf("tracing init failed: %v", err)
 	}
 	defer func() { _ = shutdown(ctx) }()
 
-	// Register Prometheus metrics
+	// Metrics
 	metrics.Register()
 
-	// Build router
+	// Router
 	r := api.NewRouter()
 
-	// Serve
 	addr := ":" + env("PORT", "5000")
-	log.Printf("listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, r))
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           r,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
+	// Signal handling for graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		log.Printf("listening on %s", addr)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("server error: %v", err)
+		}
+	}()
+
+	<-stop
+	log.Println("shutting down server...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Printf("graceful shutdown failed: %v", err)
+	}
+	log.Println("server stopped")
 }
 
 func env(key, def string) string {
