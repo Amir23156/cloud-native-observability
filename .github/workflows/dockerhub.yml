@@ -11,6 +11,10 @@ on:
 env:
   IMAGE_NAME: go-orders-api
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
