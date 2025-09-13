@@ -40,7 +40,7 @@ func main() {
 		IdleTimeout:       60 * time.Second,
 	}
 
-	// Signal handling for graceful shutdown ............
+	// Signal handling for graceful shutdown ......
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
