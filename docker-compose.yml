@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  otelcol:
+    image: otel/opentelemetry-collector:0.103.0
+    container_name: otelcol
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./observability/local/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"  # OTLP gRPC
+      - "4318:4318"  # OTLP HTTP
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4317
+      - ENVIRONMENT=dev
+      - PORT=5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - otelcol
+
