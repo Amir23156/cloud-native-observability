@@ -17,9 +17,8 @@ spec:
     spec:
       containers:
         - name: server
-          # TODO: replace with your Docker Hub image pushed by CI, e.g. "<youruser>/go-orders-api:latest"
-          image: go-orders-api:latest
-          imagePullPolicy: IfNotPresent
+          image: docker.io/amir23156/go-orders-api:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
               name: http
@@ -58,4 +57,3 @@ spec:
       port: 5000
       targetPort: http
   type: ClusterIP
-
