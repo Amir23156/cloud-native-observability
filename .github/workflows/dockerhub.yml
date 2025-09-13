@@ -59,17 +59,37 @@ env:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Derive AWS/cluster params from EKS ARN
+        id: parse
+        shell: bash
+        env:
+          EKS_CLUSTER_ARN: ${{ vars.EKS_CLUSTER_ARN }}
+          AWS_ROLE_NAME: ${{ vars.AWS_ROLE_NAME }}
+        run: |
+          if [ -z "$EKS_CLUSTER_ARN" ]; then
+            echo "EKS_CLUSTER_ARN repo variable is required" >&2
+            exit 1
+          fi
+          REGION=$(echo "$EKS_CLUSTER_ARN" | cut -d: -f4)
+          ACCOUNT=$(echo "$EKS_CLUSTER_ARN" | cut -d: -f5)
+          NAME=$(echo "$EKS_CLUSTER_ARN" | awk -F'/' '{print $NF}')
+          ROLE_NAME=${AWS_ROLE_NAME:-GitHubActionsEKSDeployer}
+          ROLE_ARN="arn:aws:iam:${ACCOUNT}:role/${ROLE_NAME}"
+          echo "region=$REGION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "role_arn=$ROLE_ARN" >> $GITHUB_OUTPUT
+
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ steps.parse.outputs.role_arn }}
+          aws-region: ${{ steps.parse.outputs.region }}
 
       - name: Update kubeconfig
         uses: aws-actions/eks-update-kubeconfig@v1
         with:
-          cluster-name: ${{ vars.EKS_CLUSTER_NAME }}
-          region: ${{ vars.AWS_REGION }}
+          cluster-name: ${{ steps.parse.outputs.name }}
+          region: ${{ steps.parse.outputs.region }}
 
       - name: Set image to current commit SHA and rollout
         env:
