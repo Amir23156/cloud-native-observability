@@ -8,7 +8,7 @@ on:
 env:
   IMAGE_NAME: go-orders-api
 
-jobs:
+  jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
@@ -32,7 +32,8 @@ jobs:
           images: |
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha
+            # Push a tag matching the full commit SHA so deploy can reference it exactly
+            type=sha,format=long
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
@@ -49,3 +50,34 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  deploy-eks:
+    name: Deploy image to EKS (main)
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update kubeconfig
+        uses: aws-actions/eks-update-kubeconfig@v1
+        with:
+          cluster-name: ${{ secrets.EKS_CLUSTER_NAME }}
+          region: ${{ secrets.AWS_REGION }}
+
+      - name: Set image to current commit SHA and rollout
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          IMAGE=docker.io/${DOCKERHUB_USERNAME}/go-orders-api:sha-${GITHUB_SHA}
+          echo "Deploying $IMAGE to deployment/go-orders-api"
+          kubectl -n observability set image deployment/go-orders-api server=$IMAGE
+          kubectl -n observability rollout status deployment/go-orders-api --timeout=180s
