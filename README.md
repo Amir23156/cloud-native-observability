@@ -132,6 +132,7 @@ kubectl -n observability port-forward svc/go-orders-api 8080:80
 curl http://localhost:8080/health
 ```
 <img width="515" height="59" alt="image" src="https://github.com/user-attachments/assets/07f73d56-6a9e-4359-9f54-8654fc286ba5" />
+And Check for health endpoint :
 ![Capture d’écran 2025-09-14 152050](https://github.com/user-attachments/assets/655727d7-d20f-42b1-8770-dd182e602bf1)
 
 
