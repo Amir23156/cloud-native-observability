@@ -72,7 +72,6 @@ jobs:
         env:
           EKS_CLUSTER_ARN_SECRET: ${{ secrets.EKS_CLUSTER_ARN }}
           EKS_CLUSTER_ARN_VAR: ${{ vars.EKS_CLUSTER_ARN }}
-          AWS_ROLE_NAME: ${{ vars.AWS_ROLE_NAME }}
         run: |
           ARN="$EKS_CLUSTER_ARN_SECRET"
           if [ -z "$ARN" ]; then ARN="$EKS_CLUSTER_ARN_VAR"; fi
@@ -83,7 +82,10 @@ jobs:
           REGION=$(echo "$ARN" | cut -d: -f4)
           ACCOUNT=$(echo "$ARN" | cut -d: -f5)
           NAME=$(echo "$ARN" | awk -F'/' '{print $NF}')
-          ROLE_NAME=${AWS_ROLE_NAME:-GitHubActionsEKSDeployer}
+          # Fixed, conventional role name so you only need to provide the cluster ARN
+          # Ensure this role exists in your account and trusts GitHub OIDC:
+          #   IAM Role Name: GithubActionsEKSDeployRole
+          ROLE_NAME=GithubActionsEKSDeployRole
           # Note the double colon after 'iam' in the ARN format
           ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"
           echo "region=$REGION" >> $GITHUB_OUTPUT
