@@ -1,7 +1,7 @@
 # Cloud-Native Observability Project
-![CI/CD](https://github.com/Amir23156/cloud-native-observability/actions/workflows/ci-cd-eks.yml/badge.svg)
-[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-Automated%20Build-blue)](https://hub.docker.com/r/<your-dockerhub-username>/go-orders-api)
-![Go Version](https://img.shields.io/github/go-mod/go-version/Amir23156/cloud-native-observability)
+![CI/CD](https://github.com/Amir23156/cloud-native-observability/actions/workflows/dockerhub.yml/badge.svg)
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-Automated%20Build-blue)](https://hub.docker.com/r/amir23156/go-orders-api)
+![Go Version](https://img.shields.io/github/Amir23156/cloud-native-observability/go-mod/go-version)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-EKS-blue)
 
 ## Overview
