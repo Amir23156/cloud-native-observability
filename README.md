@@ -63,7 +63,7 @@ Developer -> GitHub -> GitHub Actions CI/CD
 │   └── service-monitor.yaml
 │
 ├── .github/workflows/
-│   └── ci-cd-eks.yml     # GitHub Actions workflow
+│   └── dockerhub.yml     # GitHub Actions workflow
 │
 └── helm-values/          # Helm chart values
     ├── kube-prometheus-stack.yaml
@@ -123,7 +123,7 @@ curl http://localhost:8080/health
 
 ## GitHub Actions CI/CD
 
-**Workflow file:** `.github/workflows/ci-cd-eks.yml`
+**Workflow file:** `.github/workflows/dockerhub.yml`
 
 The pipeline performs:
 
