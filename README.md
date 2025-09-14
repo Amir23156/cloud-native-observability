@@ -1,5 +1,4 @@
 # Cloud-Native Observability Project
-![CI/CD](https://github.com/Amir23156/cloud-native-observability/actions/workflows/dockerhub.yml/badge.svg)
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-Automated%20Build-blue)](https://hub.docker.com/r/amir23156/go-orders-api)
 ![Docker Pulls](https://img.shields.io/docker/pulls/amir23156/go-orders-api)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Deployed-blue?logo=kubernetes)
