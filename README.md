@@ -129,6 +129,9 @@ kubectl port-forward connects your local port 8080 to the service port 80 so tha
 kubectl -n observability port-forward svc/go-orders-api 8080:80    
 curl http://localhost:8080/health
 ```
+<img width="515" height="59" alt="image" src="https://github.com/user-attachments/assets/07f73d56-6a9e-4359-9f54-8654fc286ba5" />
+![Capture d’écran 2025-09-14 152050](https://github.com/user-attachments/assets/855f74ba-90f1-46b5-8fa4-73f419d93661)
+
 
 ## GitHub Actions CI/CD
 
