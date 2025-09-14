@@ -122,6 +122,8 @@ Confirms that the deployment was successful.
 kubectl get pods -n observability #Shows the Pods running in the observability namespace.
 kubectl get svc -n observability  #Lists Services, showing how your application is exposed inside or outside the cluster.
 ```
+![Capture d’écran 2025-09-14 151937](https://github.com/user-attachments/assets/a2b7fc0c-3584-4060-b2fd-b9f21fba7d82)
+
 ### Port-forward to test
 Allows you to locally access your Kubernetes service without exposing it externally.
 kubectl port-forward connects your local port 8080 to the service port 80 so that any request to http://localhost:8080 is tunneled directly to the go-orders-api app inside the cluster
@@ -130,7 +132,8 @@ kubectl -n observability port-forward svc/go-orders-api 8080:80
 curl http://localhost:8080/health
 ```
 <img width="515" height="59" alt="image" src="https://github.com/user-attachments/assets/07f73d56-6a9e-4359-9f54-8654fc286ba5" />
-![Capture d’écran 2025-09-14 152050](https://github.com/user-attachments/assets/855f74ba-90f1-46b5-8fa4-73f419d93661)
+![Capture d’écran 2025-09-14 152050](https://github.com/user-attachments/assets/655727d7-d20f-42b1-8770-dd182e602bf1)
+
 
 
 ## GitHub Actions CI/CD
