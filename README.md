@@ -97,17 +97,21 @@ docker tag go-orders-api:latest <DOCKERHUB_USERNAME>/go-orders-api:latest
 docker push <DOCKERHUB_USERNAME>/go-orders-api:latest #Push the Image to DockerHub
 ```
 ##Kubernetes Depployment
+
 ###Create namespace
+
 Creates a separate Kubernetes namespace called observability to isolate your application's resources, This Keeps your app's resources (Pods, Services, etc.) organized and Avoids conflicts with other workloads in the cluster.
 ```bash
 kubectl apply -f k8s/namespace.yaml
 ```
 ###Deploy The app
+
 Deploy all manifests (Deployments, Services, ConfigMaps, etc.) inside the k8s/ directory, Kubernetes reads all .yaml files inside the folder and Creates Pods, Services, and other components defined for your app.
 ```bash
 kubectl apply -f k8s/
 ```
 ###Verify
+
 Confirms that the deployment was successful.
 ```bash
 kubectl get pods -n observability #Shows the Pods running in the observability namespace.
