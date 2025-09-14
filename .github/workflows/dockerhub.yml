@@ -66,45 +66,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Derive AWS/cluster params from EKS ARN
-        id: parse
-        shell: bash
-        env:
-          EKS_CLUSTER_ARN_SECRET: ${{ secrets.EKS_CLUSTER_ARN }}
-          EKS_CLUSTER_ARN_VAR: ${{ vars.EKS_CLUSTER_ARN }}
-        run: |
-          ARN="$EKS_CLUSTER_ARN_SECRET"
-          if [ -z "$ARN" ]; then ARN="$EKS_CLUSTER_ARN_VAR"; fi
-          if [ -z "$ARN" ]; then
-            echo "EKS_CLUSTER_ARN must be set (prefer Secrets; Variables accepted as fallback)" >&2
-            exit 1
-          fi
-          REGION=$(echo "$ARN" | cut -d: -f4)
-          ACCOUNT=$(echo "$ARN" | cut -d: -f5)
-          NAME=$(echo "$ARN" | awk -F'/' '{print $NF}')
-          # Fixed, conventional role name so you only need to provide the cluster ARN
-          # Ensure this role exists in your account and trusts GitHub OIDC:
-          #   IAM Role Name: GithubActionsEKSDeployRole
-          ROLE_NAME=GithubActionsEKSDeployRole
-          # Note the double colon after 'iam' in the ARN format
-          ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"
-          echo "region=$REGION" >> $GITHUB_OUTPUT
-          echo "name=$NAME" >> $GITHUB_OUTPUT
-          echo "role_arn=$ROLE_ARN" >> $GITHUB_OUTPUT
-
-      - name: Configure AWS credentials via OIDC
+      - name: Configure AWS credentials (static keys)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ steps.parse.outputs.role_arn }}
-          aws-region: ${{ steps.parse.outputs.region }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Update kubeconfig
         shell: bash
         run: |
-          echo "Configuring kubeconfig for cluster '${{ steps.parse.outputs.name }}' in region '${{ steps.parse.outputs.region }}'"
+          echo "Configuring kubeconfig for cluster '${{ secrets.EKS_CLUSTER_NAME }}' in region '${{ secrets.AWS_REGION }}'"
           aws eks update-kubeconfig \
-            --name "${{ steps.parse.outputs.name }}" \
-            --region "${{ steps.parse.outputs.region }}"
+            --name "${{ secrets.EKS_CLUSTER_NAME }}" \
+            --region "${{ secrets.AWS_REGION }}"
 
       - name: Set image to current commit SHA and rollout
         env:
