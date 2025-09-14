@@ -96,28 +96,28 @@ docker run -p 5000:5000 go-orders-api:latest #Run it locally
 docker tag go-orders-api:latest <DOCKERHUB_USERNAME>/go-orders-api:latest
 docker push <DOCKERHUB_USERNAME>/go-orders-api:latest #Push the Image to DockerHub
 ```
-##Kubernetes Depployment
+## Kubernetes Depployment
 
-###Create namespace
+### Create namespace
 
 Creates a separate Kubernetes namespace called observability to isolate your application's resources, This Keeps your app's resources (Pods, Services, etc.) organized and Avoids conflicts with other workloads in the cluster.
 ```bash
 kubectl apply -f k8s/namespace.yaml
 ```
-###Deploy The app
+### Deploy The app
 
 Deploy all manifests (Deployments, Services, ConfigMaps, etc.) inside the k8s/ directory, Kubernetes reads all .yaml files inside the folder and Creates Pods, Services, and other components defined for your app.
 ```bash
 kubectl apply -f k8s/
 ```
-###Verify
+### Verify
 
 Confirms that the deployment was successful.
 ```bash
 kubectl get pods -n observability #Shows the Pods running in the observability namespace.
 kubectl get svc -n observability  #Lists Services, showing how your application is exposed inside or outside the cluster.
 ```
-###Port-forward to test
+### Port-forward to test
 Allows you to locally access your Kubernetes service without exposing it externally.
 kubectl port-forward connects your local port 8080 to the service port 80 so that any request to http://localhost:8080 is tunneled directly to the go-orders-api app inside the cluster
 ```bash
