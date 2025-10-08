@@ -26,15 +26,7 @@ It includes:
 ---
 
 ## Architecture
-
-```text
-Developer -> GitHub -> GitHub Actions CI/CD
-         -> Docker Hub -> EKS
-                           -> Grafana
-                           -> Loki
-                           -> Tempo
-                           -> Prometheus
-```
+<img width="1600" height="1000" alt="cloud_native_observability_diagram" src="https://github.com/user-attachments/assets/6f93c9f4-8d9d-476a-968c-063e80699194" />
 ### Flow:
 1. Developer pushes code to GitHub.
 2. GitHub Actions CI pipeline builds and scans the Docker image.
